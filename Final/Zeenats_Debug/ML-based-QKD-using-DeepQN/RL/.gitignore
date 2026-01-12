@@ -1,0 +1,62 @@
+# RL Directory Specific .gitignore
+
+# Generated Model Files
+*.pt
+*.pth
+models/
+models_test/
+
+# Training Logs and Results
+training_logs/
+*.log
+logs/
+
+# Generated Keys and Messages
+generated_key.txt
+encrypted_message.txt
+final_key.txt
+alice_sifted_key.txt
+public_channel.json
+dqn_model.pt
+test_dqn_model.pt
+
+# Circuit Diagrams
+*.png
+bb84_circuit_*.png
+
+# Data Collection Files
+data_collected_*.txt
+
+# Python Cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+
+# Virtual Environment
+venv/
+env/
+ENV/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Testing
+.pytest_cache/
+.coverage
+
+# Temporary
+*.tmp
+*.temp
+*.bak

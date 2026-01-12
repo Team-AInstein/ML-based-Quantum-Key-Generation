@@ -1,0 +1,10 @@
+BIT_0 = "0"
+BIT_1 = "1"
+Z_BASE = "Z"
+X_BASE = "X"
+STATE_0 = "|0>"
+STATE_1 = "|1>"
+STATE_PLUS = "|+>"
+STATE_MINUS = "|->"
+QBER_TEST_FRACTION = 0.1   # 10% bits revealed for QBER
+QBER_THRESHOLD = 0.11     # 11% abort threshold (BB84 standard)
