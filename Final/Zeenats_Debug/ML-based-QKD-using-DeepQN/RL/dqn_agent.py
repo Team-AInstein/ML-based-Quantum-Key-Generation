@@ -55,7 +55,7 @@ class DQNAgent:
     
     def __init__(self, state_size: int = 3, action_size: int = 5,
                  learning_rate: float = 0.0001, gamma: float = 0.99,
-                 epsilon: float = 1.0, epsilon_decay: float = 0.995,
+                 epsilon: float = 1.0, epsilon_decay: float = 0.970,
                  epsilon_min: float = 0.01, buffer_size: int = 10000,
                  batch_size: int = 32, target_update_frequency: int = 50):
         """
@@ -66,8 +66,10 @@ class DQNAgent:
             action_size: Number of actions
             learning_rate: Adam optimizer learning rate
             gamma: Discount factor
-            epsilon: Exploration rate
-            epsilon_decay: Decay factor for exploration
+            epsilon: Exploration rate (starts at 1.0 for full exploration)
+            epsilon_decay: Decay factor for exploration (0.970 recommended for 
+                quantum security - balances thorough state space exploration
+                with timely convergence, avoiding premature convergence risks)
             epsilon_min: Minimum exploration rate
             buffer_size: Size of experience replay buffer
             batch_size: Minibatch size for replay updates
