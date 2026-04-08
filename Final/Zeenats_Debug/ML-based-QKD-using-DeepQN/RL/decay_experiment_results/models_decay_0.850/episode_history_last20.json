@@ -1,0 +1,182 @@
+[
+  {
+    "step": 1,
+    "action": 2,
+    "qber": 0.034482758620689655,
+    "eve_likelihood": 0.06896551724137931,
+    "sifted_length": 29,
+    "reward": 21.45,
+    "done": false
+  },
+  {
+    "step": 2,
+    "action": 2,
+    "qber": 0.06060606060606061,
+    "eve_likelihood": 0.12121212121212122,
+    "sifted_length": 33,
+    "reward": 20.605067920585164,
+    "done": false
+  },
+  {
+    "step": 3,
+    "action": 2,
+    "qber": 0.03125,
+    "eve_likelihood": 0.0625,
+    "sifted_length": 32,
+    "reward": 22.774242424242424,
+    "done": false
+  },
+  {
+    "step": 4,
+    "action": 2,
+    "qber": 0.03125,
+    "eve_likelihood": 0.0625,
+    "sifted_length": 32,
+    "reward": 21.6,
+    "done": false
+  },
+  {
+    "step": 5,
+    "action": 2,
+    "qber": 0.03225806451612903,
+    "eve_likelihood": 0.06451612903225806,
+    "sifted_length": 31,
+    "reward": 21.509677419354837,
+    "done": false
+  },
+  {
+    "step": 6,
+    "action": 2,
+    "qber": 0.02702702702702703,
+    "eve_likelihood": 0.05405405405405406,
+    "sifted_length": 37,
+    "reward": 22.05924149956408,
+    "done": false
+  },
+  {
+    "step": 7,
+    "action": 2,
+    "qber": 0.04,
+    "eve_likelihood": 0.08,
+    "sifted_length": 25,
+    "reward": 20.73108108108108,
+    "done": false
+  },
+  {
+    "step": 8,
+    "action": 2,
+    "qber": 0.034482758620689655,
+    "eve_likelihood": 0.06896551724137931,
+    "sifted_length": 29,
+    "reward": 21.670689655172414,
+    "done": false
+  },
+  {
+    "step": 9,
+    "action": 2,
+    "qber": 0.05555555555555555,
+    "eve_likelihood": 0.1111111111111111,
+    "sifted_length": 36,
+    "reward": 20.957088122605363,
+    "done": false
+  },
+  {
+    "step": 10,
+    "action": 2,
+    "qber": 0.037037037037037035,
+    "eve_likelihood": 0.07407407407407407,
+    "sifted_length": 27,
+    "reward": 22.090740740740742,
+    "done": false
+  },
+  {
+    "step": 11,
+    "action": 2,
+    "qber": 0.03225806451612903,
+    "eve_likelihood": 0.06451612903225806,
+    "sifted_length": 31,
+    "reward": 21.74115890083632,
+    "done": false
+  },
+  {
+    "step": 12,
+    "action": 2,
+    "qber": 0.02857142857142857,
+    "eve_likelihood": 0.05714285714285714,
+    "sifted_length": 35,
+    "reward": 21.897465437788018,
+    "done": false
+  },
+  {
+    "step": 13,
+    "action": 2,
+    "qber": 0.037037037037037035,
+    "eve_likelihood": 0.07407407407407407,
+    "sifted_length": 27,
+    "reward": 21.011375661375663,
+    "done": false
+  },
+  {
+    "step": 14,
+    "action": 2,
+    "qber": 0.03125,
+    "eve_likelihood": 0.0625,
+    "sifted_length": 32,
+    "reward": 21.831481481481482,
+    "done": false
+  },
+  {
+    "step": 15,
+    "action": 2,
+    "qber": 0.025,
+    "eve_likelihood": 0.05,
+    "sifted_length": 40,
+    "reward": 22.25,
+    "done": false
+  },
+  {
+    "step": 16,
+    "action": 2,
+    "qber": 0.075,
+    "eve_likelihood": 0.15,
+    "sifted_length": 40,
+    "reward": 20.0,
+    "done": false
+  },
+  {
+    "step": 17,
+    "action": 2,
+    "qber": 0.03125,
+    "eve_likelihood": 0.0625,
+    "sifted_length": 32,
+    "reward": 23.35,
+    "done": false
+  },
+  {
+    "step": 18,
+    "action": 2,
+    "qber": 0.09375,
+    "eve_likelihood": 0.1875,
+    "sifted_length": 32,
+    "reward": 19.1,
+    "done": false
+  },
+  {
+    "step": 19,
+    "action": 2,
+    "qber": 0.03333333333333333,
+    "eve_likelihood": 0.06666666666666667,
+    "sifted_length": 30,
+    "reward": 23.916666666666668,
+    "done": false
+  },
+  {
+    "step": 20,
+    "action": 2,
+    "qber": 0.03571428571428571,
+    "eve_likelihood": 0.07142857142857142,
+    "sifted_length": 28,
+    "reward": 21.304761904761904,
+    "done": true
+  }
+]

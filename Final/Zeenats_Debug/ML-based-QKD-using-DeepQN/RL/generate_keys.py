@@ -36,7 +36,8 @@ def generate_secure_key(key_length=256, eve_present=False, apply_pa=True):
         key_length=key_length,
         use_simulator=True,
         eve_present=eve_present,
-        eve_intercept_ratio=0.8 if eve_present else 0.0  # Eve intercepts 80%
+        eve_intercept_ratio=0.8 if eve_present else 0.0,  # Eve intercepts 80%
+        channel_error_rate=0.01  # Realistic quantum channel noise (1%)
     )
     
     result = bb84.run_protocol()

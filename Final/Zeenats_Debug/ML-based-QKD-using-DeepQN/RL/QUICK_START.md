@@ -175,6 +175,22 @@ print(f"Reduction: {metadata['reduction_factor']:.2f}x")
 print(f"Eve's info: {metadata['eve_likelihood']:.1%}")
 ```
 
+### Use a Trained Agent for Encryption
+After you finish training and have a model saved under
+`models/dqn_final.pt`, the helper script `apply_trained_agent.py` will
+run a single episode using the agent’s greedy policy, output the
+measured QBER and sifted key, then perform a round‑trip encryption of a
+user-supplied message.
+
+```bash
+python apply_trained_agent.py models/dqn_final.pt --noise 0.02 \
+    --random-noise --message "secret message"
+```
+
+This is the quickest way to verify that a trained model actually
+improves the quality of BB84 keys and that the resulting key can be
+plugged straight into the chat encryption module.
+```
 ### Custom Training Configuration
 ```python
 from train_integrated import QKDTrainer

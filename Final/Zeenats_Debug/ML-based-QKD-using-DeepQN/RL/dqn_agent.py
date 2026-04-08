@@ -54,9 +54,10 @@ class DQNAgent:
     """
     
     def __init__(self, state_size: int = 3, action_size: int = 5,
-                 learning_rate: float = 0.001, gamma: float = 0.99,
+                 learning_rate: float = 0.0001, gamma: float = 0.99,
                  epsilon: float = 1.0, epsilon_decay: float = 0.995,
-                 epsilon_min: float = 0.01, buffer_size: int = 10000):
+                 epsilon_min: float = 0.01, buffer_size: int = 10000,
+                 batch_size: int = 32, target_update_frequency: int = 50):
         """
         Initialize DQN agent.
         
@@ -69,6 +70,8 @@ class DQNAgent:
             epsilon_decay: Decay factor for exploration
             epsilon_min: Minimum exploration rate
             buffer_size: Size of experience replay buffer
+            batch_size: Minibatch size for replay updates
+            target_update_frequency: Steps between target network syncs
         """
         self.state_size = state_size
         self.action_size = action_size
@@ -87,18 +90,23 @@ class DQNAgent:
         self.target_network.load_state_dict(self.q_network.state_dict())
         self.target_network.eval()
         
-        # Optimizer and loss
+        # Optimizer and loss (Huber for stability)
         self.optimizer = optim.Adam(self.q_network.parameters(), lr=learning_rate)
-        self.loss_fn = nn.MSELoss()
+        self.loss_fn = nn.SmoothL1Loss()
         
         # Experience replay buffer
         self.experience_buffer = deque(maxlen=buffer_size)
-        self.batch_size = 32
+        self.batch_size = batch_size
         
         # Training metrics
         self.loss_history = []
         self.update_counter = 0
-        self.target_update_frequency = 100
+        self.target_update_frequency = target_update_frequency
+
+    def update_epsilon(self):
+        """Reduce epsilon according to schedule (call once per episode)."""
+        if self.epsilon > self.epsilon_min:
+            self.epsilon = max(self.epsilon_min, self.epsilon * self.epsilon_decay)
     
     def remember(self, state, action, reward, next_state, done):
         """Store experience in replay buffer."""
@@ -136,7 +144,7 @@ class DQNAgent:
             batch_size = self.batch_size
         
         if len(self.experience_buffer) < batch_size:
-            return 0.0  # Not enough samples yet
+            return None  # Not enough samples yet
         
         # Sample mini-batch
         mini_batch = random.sample(self.experience_buffer, batch_size)
@@ -176,9 +184,12 @@ class DQNAgent:
         if self.update_counter % self.target_update_frequency == 0:
             self.target_network.load_state_dict(self.q_network.state_dict())
         
-        # Decay epsilon
-        if self.epsilon > self.epsilon_min:
-            self.epsilon *= self.epsilon_decay
+        # NOTE: epsilon decay moved to explicit method so that training
+        # loop can control when the exploration rate is reduced (e.g. once
+        # per episode instead of every replay step).
+        # previously this code caused epsilon to hit its minimum early in an
+        # episode; the trainer now calls ``update_epsilon()`` instead.
+        pass
         
         loss_value = loss.item()
         self.loss_history.append(loss_value)

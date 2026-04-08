@@ -37,16 +37,50 @@ def main():
     print(" Integrated: Real BB84 + DQN + Privacy Amplification")
     print("=" * 80)
     
+    import argparse
+
+    # parse command-line flags for env configuration
+    parser = argparse.ArgumentParser(description="Run full training with optional environment parameters")
+    parser.add_argument('--episodes', type=int, default=100)
+    parser.add_argument('--key-length', type=int, default=64)
+    parser.add_argument('--max-steps', type=int, default=20)
+    parser.add_argument('--noise', type=float, default=0.01,
+                        help="baseline channel error rate")
+    parser.add_argument('--random-noise', action='store_true',
+                        help="randomise noise per BB84 run")
+    parser.add_argument('--eve-prob', type=float, default=0.5,
+                        help="probability Eve is present each episode")
+    # agent hyperparameters
+    parser.add_argument('--epsilon-decay', type=float, default=0.995,
+                        help="multiplicative decay applied once per episode")
+    parser.add_argument('--epsilon-min', type=float, default=0.01,
+                        help="minimum exploration rate")
+    parser.add_argument('--lr', type=float, default=0.0001,
+                        help="DQN learning rate")
+    parser.add_argument('--gamma', type=float, default=0.99,
+                        help="discount factor")
+    parser.add_argument('--live-plot', action='store_true',
+                        help="Show live reward/loss plot during training")
+    args = parser.parse_args()
+
     # Configuration
     config = {
-        'episodes': 100,
-        'key_length': 64,
-        'max_steps': 20,
-        'dqn_learning_rate': 0.001,
-        'dqn_gamma': 0.99,
-        'dqn_epsilon_start': 1.0,
-        'dqn_epsilon_min': 0.01,
-        'dqn_epsilon_decay': 0.995,
+        'episodes': args.episodes,
+        'key_length': args.key_length,
+        'max_steps': args.max_steps,
+        # environment noise configuration
+        'env_config': {
+            'channel_error_rate': args.noise,
+            'random_noise': args.random_noise,
+            'eve_probability': args.eve_prob
+        },
+        # agent hyperparameters
+        'agent_config': {
+            'learning_rate': args.lr,
+            'gamma': args.gamma,
+            'epsilon_decay': args.epsilon_decay,
+            'epsilon_min': args.epsilon_min,
+        },
         'batch_size': 32,
     }
     
@@ -59,9 +93,11 @@ def main():
     print(f"   Episodes: {config['episodes']}")
     print(f"   Key Length: {config['key_length']} qubits")
     print(f"   Max Steps/Episode: {config['max_steps']}")
-    print(f"   DQN Learning Rate: {config['dqn_learning_rate']}")
-    print(f"   Gamma (discount): {config['dqn_gamma']}")
-    print(f"   Epsilon Decay: {config['dqn_epsilon_decay']}")
+    print(f"   Channel Noise: {config['env_config']['channel_error_rate']} (random={config['env_config']['random_noise']})")
+    print(f"   Eve Probability: {config['env_config']['eve_probability']}")
+    print(f"   DQN Learning Rate: {config['agent_config']['learning_rate']}")
+    print(f"   Gamma (discount): {config['agent_config']['gamma']}")
+    print(f"   Epsilon Decay: {config['agent_config']['epsilon_decay']}  (min {config['agent_config']['epsilon_min']})")
     print(f"   Batch Size: {config['batch_size']}")
     print(f"\n   📁 Logs saved to: {log_dir}")
     
@@ -69,7 +105,10 @@ def main():
         episodes=config['episodes'],
         key_length=config['key_length'],
         max_steps=config['max_steps'],
-        model_save_dir=str(log_dir / "models")
+        model_save_dir=str(log_dir / "models"),
+        env_config=config.get('env_config', {}),
+        agent_config=config.get('agent_config', {}),
+        live_plot=args.live_plot
     )
     
     # Training
@@ -93,7 +132,14 @@ def main():
     print("\n" + "-" * 80)
     print("Running Full Pipeline Demonstration...")
     print("-" * 80)
-    trainer.demonstrate_with_privacy_amplification()
+    final_key, key_metadata = trainer.demonstrate_with_privacy_amplification()
+    
+    # If a final key was produced, save it alongside logs
+    if final_key:
+        key_path = log_dir / "final_quantum_key.txt"
+        with open(key_path, 'w') as fkey:
+            fkey.write(final_key)
+        print(f"\n✓ Final quantum key saved to {key_path}")
     
     # Save summary
     summary = {

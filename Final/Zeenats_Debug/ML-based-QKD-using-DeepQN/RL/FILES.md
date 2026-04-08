@@ -125,6 +125,23 @@ python run_training.py
 ### 7. **test_integration.py** (11 lines)
 Quick integration test
 
+---
+
+### 8. **apply_trained_agent.py** (120 lines)
+Utility to execute a saved RL model, obtain a BB84 key, and run a
+sample encryption/decryption cycle.  Shows final QBER and key length;
+useful for verifying that training results translate into usable
+encryption material.
+
+**Usage:**
+```bash
+python apply_trained_agent.py models/dqn_final.pt --noise 0.02 \
+    --random-noise --message "hello"
+```
+
+---
+
+
 **Features:**
 - 3-episode quick test
 - Verifies all components working

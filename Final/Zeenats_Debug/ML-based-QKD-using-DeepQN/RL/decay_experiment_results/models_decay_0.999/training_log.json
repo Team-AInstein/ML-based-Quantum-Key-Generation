@@ -1,0 +1,8 @@
+{
+  "total_episodes": 200,
+  "total_reward_mean": 397.02912435316944,
+  "total_reward_std": 24.18340894849821,
+  "qber_mean": 0.06141061384023515,
+  "qber_std": 0.01992273064873948,
+  "key_length_mean": 17.7
+}

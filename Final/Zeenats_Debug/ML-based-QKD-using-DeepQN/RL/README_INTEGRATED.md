@@ -352,6 +352,28 @@ RL/
 
 ---
 
+## Additional Configuration & Utilities
+
+* The training script now accepts an `env_config` argument that is
+  forwarded to `IntegratedQKDEnv`.  Useful keys are
+  `channel_error_rate`, `random_noise`, and `eve_probability`.  Random
+  noise is especially helpful to avoid episodes with QBER=0 and thus
+  give the agent real variation to learn from.
+
+* After training you can convert a saved model into an actual BB84 key
+  and immediately exercise the encryption module using
+  `apply_trained_agent.py`.
+
+```bash
+python apply_trained_agent.py models/dqn_final.pt --noise 0.02 \
+    --random-noise --message "test"
+```
+
+This outputs the QBER, final sifted key, and demonstrates encrypting
+and decrypting a short message with `QuantumEncryption`.
+
+---
+
 ## License
 
 MIT License - See LICENSE file for details

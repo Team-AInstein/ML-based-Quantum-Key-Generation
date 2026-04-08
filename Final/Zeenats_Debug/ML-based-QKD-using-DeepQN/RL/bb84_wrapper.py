@@ -23,7 +23,8 @@ class BB84Wrapper:
     """
     
     def __init__(self, key_length: int = 64, use_simulator: bool = True, 
-                 eve_present: bool = False, eve_intercept_ratio: float = 1.0):
+                 eve_present: bool = False, eve_intercept_ratio: float = 1.0,
+                 channel_error_rate: float = 0.01):
         """
         Initialize BB84 wrapper.
         
@@ -32,11 +33,13 @@ class BB84Wrapper:
             use_simulator: Use QasmSimulator (True) or IBM hardware (False)
             eve_present: Whether Eve is eavesdropping
             eve_intercept_ratio: Fraction of qubits Eve intercepts (0.0 to 1.0)
+            channel_error_rate: Probability of bit flip due to channel noise (0.0 to 1.0)
         """
         self.key_length = key_length
         self.use_simulator = use_simulator
         self.eve_present = eve_present
         self.eve_intercept_ratio = eve_intercept_ratio
+        self.channel_error_rate = channel_error_rate  # Realistic quantum channel noise
         
         self.simulator = AerSimulator()
         self.shots = 1
@@ -103,12 +106,18 @@ class BB84Wrapper:
         # Bob prepares measurement bases
         self.bob_bases = self.get_random_bases(self.key_length)
         
-        # Bob's measurements (simulating quantum measurement)
-        self.bob_measurements = [
+        # Bob's measurements (simulating quantum measurement + channel noise)
+        bob_ideal = [
             self.eve_measurements[i] if self.eve_present and self.eve_bases[i] == self.bob_bases[i]
             else (self.alice_bits[i] if self.alice_bases[i] == self.bob_bases[i]
                   else random.randint(0, 1))
             for i in range(self.key_length)
+        ]
+        
+        # Add channel noise: each bit has channel_error_rate probability of flipping
+        self.bob_measurements = [
+            1 - bit if random.random() < self.channel_error_rate else bit
+            for bit in bob_ideal
         ]
         
         # Sifting: keep only bits where Alice & Bob used same basis
@@ -123,6 +132,19 @@ class BB84Wrapper:
         # Calculate QBER (Quantum Bit Error Rate)
         if len(alice_sifted) > 0:
             errors = sum(1 for a, b in zip(alice_sifted, bob_sifted) if a != b)
+            # If we are simulating a non-zero error channel, it's statistically
+            # possible (especially with short keys) that *no* bit is flipped.
+            # In training this led to long runs of QBER=0 and a flat Eve
+            # likelihood, which confused the DQN agent.  To provide a clearer
+            # learning signal we ensure at least one error when
+            # channel_error_rate>0 by flipping a random sifted bit if
+            # ``errors`` is zero.
+            if errors == 0 and self.channel_error_rate > 0:
+                # flip one random position in the sifted arrays
+                import random as _rnd
+                idx = _rnd.randrange(len(alice_sifted))
+                bob_sifted[idx] = 1 - bob_sifted[idx]
+                errors = 1
             self.qber = errors / len(alice_sifted)
         else:
             self.qber = 0.0
@@ -143,13 +165,23 @@ class BB84Wrapper:
         """
         Estimate likelihood of eavesdropping using Bayesian inference.
         Higher QBER + correlated errors = higher Eve likelihood.
+
+        The previous implementation returned **0.0** for any QBER below
+        5%. that led to a constant 0 value when the channel was only
+        slightly noisy.  Instead we now provide a smooth mapping even for
+        small error rates, producing a tiny nonzero likelihood that the
+        training agent can observe.
         """
+        # small QBER should still produce a small likelihood rather than
+        # clamping to zero. we scale linearly up to 0.05 (5%), then follow
+        # the earlier piecewise behaviour.
         if self.qber < 0.05:
-            return 0.0  # Very unlikely Eve is present (theoretical limit ~0)
+            # map [0,0.05] → [0,0.1]
+            return min(0.1, self.qber / 0.05 * 0.1)
         elif self.qber < 0.11:
-            return min(0.5, self.qber * 2)  # Gradual increase
+            return min(0.5, self.qber * 2)  # gradual increase
         else:
-            return min(1.0, self.qber)  # High confidence in Eve
+            return min(1.0, self.qber)  # high confidence in Eve
     
     def to_json(self) -> str:
         """Export protocol trace for logging."""
